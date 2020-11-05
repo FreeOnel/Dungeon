@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private float moveH, moveV;
     private float rotateH;
+    private Animator animator;
+    private Vector2 moveD;
+
     [SerializeField] public float moveSpeed = 5.0F;
     [SerializeField] public float sprintMultiplier = 2F;
 
@@ -15,6 +18,7 @@ public class PlayerController : MonoBehaviour
     void Start()
     {
         rb = GetComponent <Rigidbody2D>();
+        animator = GetComponent <Animator>();
     }
 
     // Update is called once per frame
@@ -22,10 +26,13 @@ public class PlayerController : MonoBehaviour
     {
        moveH = Input.GetAxisRaw("Horizontal")*moveSpeed; 
        moveV = Input.GetAxisRaw("Vertical")*moveSpeed;
+        moveD = new Vector2(moveH, moveV);
+
         if (Input.GetKeyDown(KeyCode.LeftShift)){
-            moveH *= sprintMultiplier;
-            moveV *= sprintMultiplier;
+            moveD *= sprintMultiplier;
         }
+
+        animator.SetFloat("character_speed", moveD.magnitude);
 
         rotateH = Math.Sign(Input.GetAxis("Horizontal"));
         if (Input.GetAxis("Horizontal") != 0) {
@@ -35,7 +42,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        rb.velocity = new Vector2(moveH, moveV);
+        rb.velocity = moveD;
     }
 
 }
